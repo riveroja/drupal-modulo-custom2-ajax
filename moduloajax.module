@@ -1,0 +1,73 @@
+<?php
+function moduloajax_block_info() {
+    $blocks = array();
+    $blocks['moduloajax'] = array(
+         'info' => t('Formulario AGD'),
+    );
+   return $blocks;
+}
+
+function moduloajax_block_view($delta='') {
+    $block = array();
+    switch($delta) {
+      case 'moduloajax' :
+        $content = drupal_get_form("mi_formulario");
+        $block['content'] = array(
+            "form"=>$content);
+        break;
+    }
+     return $block;
+}
+
+function mi_formulario($form, &$form_state){
+ $form['box-container'] = array(
+   '#prefix' => '<div id="box">',
+ );
+ $form['cuit'] = array(
+     //'#suffix' => '</div>',
+     '#type'         => 'textfield',
+     '#required'     => true,
+     '#attributes' => array('id' => 'cuit', 'placeholder'=> 'Ingrese CUIT'),
+ );
+ 
+ 
+ $form['tipo'] = array(
+    //'#suffix' => '</div>',
+    '#type' => 'select',
+    '#title' => t('Tipo de Comprobante'),
+    '#attributes' => array('id' => 'tipo', 'placeholder'=> 'Tipo de comprobante'),
+    '#options' => array(
+       0 => t('Factura A'),
+       1 => t('Factura B'),
+       2 => t('Factura C'),
+       3 => t('Factura D'),
+       4 => t('Factura E'),
+       5 => t('Factura F'),
+       6 => t('Factura G'),
+    ),
+);
+ 
+ 
+ $form['numero'] = array(
+     '#suffix' => '</div>',
+     '#type'         => 'textfield',
+     '#required'     => true,
+     '#attributes' => array('id' => 'numero', 'placeholder'=> 'Ingrese numero de comprobante'),
+ );
+ 
+ $form['submit'] = array(
+     '#type'         => 'submit',
+     '#value'        => t("Consultar"),
+     '#ajax' => array(
+       'callback' => 'ajax_submit_callback',
+       'wrapper' => 'box',
+     ), 
+ );
+ return $form;
+}
+
+function ajax_submit_callback($form, $form_state) {
+    $element = $form['box-container'];
+    $element['#markup'] = '<h3>Datos ingresados '.$form_state['values']['cuit'].' '.$form_state['values']['tipo'].' '.$form_state['values']['numero'].'</h3>';
+    return $element;
+}
